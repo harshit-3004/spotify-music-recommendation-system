@@ -1,0 +1,9 @@
+version: '3.9'
+services:
+  app:
+    image: harshit30/kubernetes-testing:python-project-v4
+    ports:
+      - 8900:8501
+    environment:
+      - id=f1bb1c4c83e24fe18080656ed976dbcf
+      - secret=ae6faa8c897c4b65b620c44d4084dc98
