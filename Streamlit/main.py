@@ -4,8 +4,10 @@ import streamlit.components.v1 as components
 import time
 from model import *
 from PIL import Image
+from emotion_based_music.music import load_data
 
-
+if "run" not in st.session_state:
+	st.session_state.run = "true"
 if 'model' not in st.session_state:
     st.session_state.model = 'Model 1'
 def update_radio2():
@@ -153,7 +155,7 @@ def home_page():
         radio1=col2.radio("Model",options=["Spotify model"],key='radio1',on_change=update_radio1)
         Region=col3.selectbox("Please Choose Region",index=58,key='Region',on_change=update_Region,options=('AD', 'AR', 'AU', 'AT', 'BE', 'BO', 'BR', 'BG', 'CA', 'CL', 'CO', 'CR', 'CY', 'CZ', 'DK', 'DO', 'EC', 'SV', 'EE', 'FI', 'FR', 'DE', 'GR', 'GT', 'HN', 'HK', 'HU', 'IS', 'ID', 'IE', 'IT', 'JP', 'LV', 'LI', 'LT', 'LU', 'MY', 'MT', 'MX', 'MC', 'NL', 'NZ', 'NI', 'NO', 'PA', 'PY', 'PE', 'PH', 'PL', 'PT', 'SG', 'ES', 'SK', 'SE', 'CH', 'TW', 'TR', 'GB', 'US', 'UY'))
     elif radio =="Playlist" or radio =="Song" :
-        radio2=col2.radio("Model",options=("Model 1","Model 2","Spotify Model"),key='radio2',on_change=update_radio2)
+        radio2=col2.radio("Model",options=("Model 1","Model 2","Spotify Model", "Emotion Based"),key='radio2',on_change=update_radio2)
         if st.session_state.radio2=="Model 1" or st.session_state.radio2=="Model 2":
             num_genre=col3.selectbox("choose a number of genres to focus on",options=(1,2,3,4,5,6,7),index=2,key='num_genre',on_change=update_num_genre)
             same_art=col3.selectbox("How many recommendations by the same artist",options=(1,2,3,4,5,7,10,15),index=3,key='same_art',on_change=update_same_art)
@@ -161,7 +163,7 @@ def home_page():
 
     st.markdown("<br>", unsafe_allow_html=True)
     
-    if radio == "Playlist" :
+    if radio == "Playlist" and radio2 !="Emotion Based":
         st.session_state.playlist_url = st.session_state.p_url
         Url = st.text_input(label="Playlist Url",key='playlist_url',on_change=update_playlist_url)
         playlist_page()
@@ -178,7 +180,7 @@ def home_page():
             st.image(spotify_get_playlist_url)
         if state:
             play_recomm()
-    elif radio == "Song" :
+    elif radio == "Song" and radio2 !="Emotion Based":
         st.session_state.song_url = st.session_state.s_url
         Url = st.text_input(label="Song Url",key='song_url',on_change=update_song_url)
         song_page()
@@ -212,6 +214,11 @@ def home_page():
             st.image(spotify_get_artist_url)
         if state:
             art_recomm()
+
+    elif (radio == "Playlist" or radio == "Song") and radio2 == "Emotion Based":
+        st.session_state.song_url = st.session_state.s_url
+        load_data(st.session_state.run)
+
     
 def result_page():
     if 'rs' not in st.session_state:
