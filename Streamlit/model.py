@@ -518,3 +518,33 @@ def update_dataset():
     df.to_csv('Data/streamlit.csv',index=False)
     return (len(df)-cur)
 
+
+def mood_model(uri):
+    log = []
+    Fresult = uri
+
+    log.append('Start logging')
+    try:
+        log.append('Mood Detection Method')
+        stream = open("Spotify/Spotify.yaml")
+        spotify_details = yaml.safe_load(stream)
+        auth_manager = SpotifyClientCredentials(
+            client_id=spotify_details['Client_id'], client_secret=spotify_details['client_secret'])
+    except:
+        log.append('Recommending songs based on mood')
+        try:
+            Client_id = st.secrets["Client_ID"]
+            client_secret = st.secrets["Client_secret"]
+            auth_manager = SpotifyClientCredentials(
+                client_id=Client_id, client_secret=client_secret)
+        except:
+            log.append('mood detection model')
+            Client_id = os.environ['Client_ID']
+            client_secret = os.environ['Client_secret']
+            auth_manager = SpotifyClientCredentials(
+                client_id=Client_id, client_secret=client_secret)
+    sp = spotipy.client.Spotify(auth_manager=auth_manager)
+
+    log.append('Starting the Model')
+    log.append('Model run successfully')
+    return Fresult, log

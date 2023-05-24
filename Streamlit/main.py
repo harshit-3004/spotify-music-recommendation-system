@@ -4,7 +4,10 @@ import streamlit.components.v1 as components
 import time
 from model import *
 from PIL import Image
+from song_mood import Recommend_Songs
+
 from emotion_based_music.music import load_data
+
 
 if "run" not in st.session_state:
 	st.session_state.run = "true"
@@ -98,6 +101,19 @@ def song_recomm():
             st.success('Go to the Result page to view the  Spotify recommendations')
     else:
         st.error('Model failed. Check the log for more information.')
+
+def mood_song_recomm(song_lst):
+    if 'rs' in st.session_state:
+        del st.session_state.rs,st.session_state.err
+    with st.spinner('Getting Recommendations...'):
+        res,err = mood_model(song_lst)
+        st.session_state.rs=res
+        st.session_state.err=err
+    if len(st.session_state.rs)>=1:
+        st.success('Go to the Result page to view the Song recommendations')
+    else:
+        st.error('Model failed. Check the log for more information.')
+
 
 def playlist_page():
     st.subheader("User Playlist")
@@ -217,8 +233,10 @@ def home_page():
 
     elif (radio == "Playlist" or radio == "Song") and radio2 == "Emotion Based":
         st.session_state.song_url = st.session_state.s_url
-        load_data(st.session_state.run)
-
+        emotion, state = load_data(st.session_state.run)
+        if state:
+            mood_ids = Recommend_Songs(emotion)
+            mood_song_recomm(mood_ids)
     
 def result_page():
     if 'rs' not in st.session_state:

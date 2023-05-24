@@ -14,7 +14,6 @@ hands = mp.solutions.hands
 holis = holistic.Holistic()
 drawing = mp.solutions.drawing_utils
 
-print('hiii')
 
 if "run" not in st.session_state:
 	st.session_state["run"] = "true"
@@ -91,13 +90,9 @@ class EmotionProcessor:
 
 
 def load_data(session_state_run):	
-	# if st.session_state["run"] != "false":
 	if session_state_run!="false":
-		print('fghfdsg\n')
 		webrtc_streamer(key="key", desired_playing_state=True,
 						       video_processor_factory=EmotionProcessor)
-		st.empty()
-		print('dfgdv')
 	btn = st.button("Recommend me songs")
 
 	if btn:
@@ -105,6 +100,6 @@ def load_data(session_state_run):
 			st.warning("Please let me capture your emotion first")
 			st.session_state["run"] = "true"
 		else:
-			webbrowser.open(f"https://www.youtube.com/results?search_query={emotion}+songs")
-			np.save("emotion.npy", np.array([""]))
-			st.session_state["run"] = "false"
+			return [emotion, True]
+		
+	return ['neutral', False]
